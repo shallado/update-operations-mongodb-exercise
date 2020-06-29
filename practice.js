@@ -23,12 +23,33 @@ db.users.updateOne({
 // ------------ Using $min, $max, $mul ----------
 // user chris
 // update but only change the age value if its greater than the given value of 35
+db.users.updateOne({ 
+  name: 'Chris', 
+}, {
+  $max: {
+    age: 35
+  }
+});
 
 // user chris
 // update but only change the age value if its less than the given value of 35
+db.users.updateOne({
+  name: 'Chris'
+}, {
+  $min: {
+    age: 35
+  }
+});
 
 // user chris
 // update and multiply the age value with the given value
+db.users.updateOne({
+  name: 'Chris'
+}, {
+  $mul: {
+    age: 2
+  }
+});
 
 // ------------ Getting Rid of Fields ----------
 // update all users with a field of isSporty set to true and remove the phone field
