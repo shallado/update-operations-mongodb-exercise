@@ -78,18 +78,64 @@ db.users.updateMany({}, {
 // {
 //   age: 29,
 //   hobbies: [{
-//     title: "Good fodo",
+//     title: "Eating Good Food",
 //     frequency: 3
 //   }],
 //   isSporty: true
 // }
+db.users.updateOne({ 
+  name: 'Maria' 
+}, {
+  $set: {
+    age: 29,
+    hobbies: [{
+      title: 'Eating Good food',
+      frequency: 3
+    }],
+    isSporty: true
+  }
+}, {
+  upsert: true
+});
 
 // assignment
 // 1) Create a new collection ("sports") and upsert two new documents into it (with these fields: "title", "requiresTeam");
+db.sports.updateOne({}, {
+  $set: {
+    title: 'baseball',
+    requiresTeam: true
+  }
+}, {
+  upsert: true
+});
+
+db.sports.updateOne({
+  title: 'tennis'
+}, {
+  $set: {
+    requiresTeam: false
+  }
+}, {
+  upsert: true
+});
 
 // 2) Update all documents which do require a team by adding a new field with the minimum amount of players to 11
+db.sports.updateMany({
+  requiresTeam: true
+}, {
+  $set: {
+    minAmount: 11
+  }
+});
 
 // 3) Update all documents that required team by increasing the number of required players by 10
+db.sports.updateMany({
+  requiresTeam: true
+}, {
+  $inc: {
+    minAmount: 10
+  }
+});
 
 
 // ------------ Updating Matched Array Elements ----------
