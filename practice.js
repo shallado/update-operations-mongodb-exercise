@@ -143,39 +143,61 @@ db.sports.updateMany({
 // .$[] match all elements
 
 // find users with hobbies array contains title of 'Sports' and frequency greater than or equal 3
+db.users.find({ 
+  hobbies: {
+    $elemMatch: {
+      title: 'Sports',
+      frequency: {
+          $gte: 3
+      }
+    }
+  } 
+});
 
-// update document with hobbies array that contains a document with title of 'Sports' and frequency that is greater than or equal to 3
 // the first match in hobbies update the document to have a field named highFrequency with value set to true
-
-// ------------ Updating All Array Elements ---------- // this is where I left off
-// update hobbies array that contains a document with frequency value that is greater than 2 
-// update it with adding/updating field goodFrequency = true
-
-// find all persons with an age older than 30 and add new field to all documents in my hobbies array
-// update documents with a totalAge that is greater than 30 
-// increment the fri
 db.users.updateMany({
-  totalAge: {
-    $gt: 30
+  hobbies: {
+    $elemMatch: {
+      title: 'Sports',
+      frequency: {
+        $gte: 3
+      }
+    }
   }
 }, {
-  $inc: {
-    "hobbies.$[].frequency": -1
+  $set: {
+    'hobbies.$.highFrequency': true
   }
 });
 
-// ------------ Finding & Updating Specific Fields ----------
+// ------------ Updating All Array Elements ---------- //
+// update hobbies array that contains a document with frequency value that is greater than 2 
+// update it with adding/updating field goodFrequency = true
 db.users.updateMany({
-  "hobbies.frequency": {
+  'hobbies.frequency': {
     $gt: 2
   }
 }, {
   $set: {
-    "hobbies.$[el].goodFrequency": true
+    'hobbies.$[].goodFrequency': true
+  }
+});
+
+// ------------ Finding & Updating Specific Fields ----------
+// update hobbies with a frequency greater than 2
+// update field goodFrequency set to true
+// but only update the docs inside the array that have a frequency field value greater than 2
+db.users.updateMany({
+  'hobbies.frequency': {
+    $gt: 2
+  }
+}, {
+  $set: {
+    'hobbies.$[el].goodFrequency': true
   }
 }, {
   arrayFilters: [{
-    "el.frequency": {
+    'el.frequency': {
       $gt: 2
     }
   }]
@@ -183,50 +205,57 @@ db.users.updateMany({
 
 // ------------ Adding Elements to Arrays ----------
 // update user Maria and add this value
-// hobbies: {
-//   title: 'Sports',
-//   frequency: 2
-// };
+// update Maria hobbies field and add these hobbies
+// sort by descending order based off of frequency
+// {
+//   title: 'Good Wine',
+//   frequency: 1
+// }
+// {
+//   title: 'Hiking',
+//   frequency: 1
+// }
 
 db.users.updateOne({
-  name: "Maria"
+  name: 'Maria'
 }, {
   $push: {
     hobbies: {
       $each: [{
-        title: "Good Wine",
+        title: 'Good Wine',
         frequency: 1
       }, {
-        title: "Hiking",
-        frequency: 2
+        title: 'Hiking',
+        frequency: 1
       }],
-      $sort: {
-        frequency: -1
-      }
+      $sort: { frequency: -1 }
     }
+  }
 });
 
 // ------------ Removing Elements From Array ----------
+// remove hobby from maria with title hiking
+// remove a hobby from chris that is the last one in his hobbies array
 db.users.updateOne({
-  name: "Maria"
+  name: 'Maria'
 }, {
   $pull: {
     hobbies: {
-      title: "Hiking"
+      title: 'Hiking'
     }
   }
 });
 
 db.users.updateOne({
-  name: "Chris"
+  name: 'Chris'
 }, {
   $pop: {
-    hobbies: 1
+    hobbies: -1
   }
 });
 
 // ------------ Understanding $addToSet ----------
-// adds values that are not inside the array yet so only adds unique values
+// add value below to Maria hobbies but don't use push operator
 db.users.updateOne({
   name: "Maria"
 }, {
