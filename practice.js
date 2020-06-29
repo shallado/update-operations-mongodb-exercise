@@ -53,9 +53,24 @@ db.users.updateOne({
 
 // ------------ Getting Rid of Fields ----------
 // update all users with a field of isSporty set to true and remove the phone field
+db.users.updateMany({ 
+  isSporty: false 
+}, { 
+  $set: {
+    isSporty: true
+  },
+  $unset: {
+    phone: ''
+  }
+});
 
 // ------------ Renaming Fields ----------
 // rename all user age field to totalAge
+db.users.updateMany({}, {
+  $rename: {
+    age: 'totalAge'
+  }
+});
 
 // ------------ Understanding upsert() ----------
 // update some document but not sure whether it exists or not but if it doesn't exist still insert that document with the given data object
